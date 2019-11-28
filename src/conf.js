@@ -17,12 +17,12 @@ export default {
     main: {
       name: "График",
       hidden: false,
-      class: Map
+      class: VueApp
     },
     Map: {
       name: "Крата",
       hidden: false,
-      class: VueApp
+      class: Map
     },
   }
 }

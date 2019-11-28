@@ -2,7 +2,7 @@
   <head>
     <link
       rel="stylesheet"
-      href="/<%=htmlWebpackPlugin.files.chunks.main.css %>"
+      href="<%=htmlWebpackPlugin.files.chunks.main.css %>"
     />
     <link
       rel="stylesheet"
@@ -15,7 +15,7 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=<%= GOOGLE_KEY %>&language=ru"></script>
   </head>
   <body>
-    <script src="/<%= htmlWebpackPlugin.files.chunks.main.entry %>"></script>
+    <script src="<%= htmlWebpackPlugin.files.chunks.main.entry %>"></script>
   </body>
   <div id="root"></div>
 </html>

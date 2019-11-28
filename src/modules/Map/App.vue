@@ -133,17 +133,6 @@ export default {
       this.bounds = new google.maps.LatLngBounds();
       this.bounds.extend(center);
     },
-    // pinSymbol(color) {
-    //   return {
-    //     path:
-    //       "M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z M -2,-30 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0",
-    //     fillColor: color,
-    //     fillOpacity: 1,
-    //     strokeColor: "#000",
-    //     strokeWeight: 2,
-    //     scale: 1
-    //   };
-    // },
     /**
      *  Метод получает заказы из бэкенда, и помещает их на крату
      */
@@ -156,19 +145,21 @@ export default {
       this.orderMarkers = [];
 
       this.deliveryInfo.forEach(order => {
-        // создаем маркер
-        let marker = new google.maps.Marker({
-          position: new google.maps.LatLng(order.latitude, order.longitude),
-          title: order.address,
-          map: this.map
-        });
+        if (order.point_number !== "1") {
+          // создаем маркер
+          let marker = new google.maps.Marker({
+            position: new google.maps.LatLng(order.latitude, order.longitude),
+            title: order.address,
+            map: this.map
+          });
 
-        // помещаем маркер в массив маркеров
-        this.orderMarkers.push(marker);
-        // помещаем координаты маркера для центрироавния карты
-        this.bounds.extend(marker.position);
-        // вешам событие на маркер
-        marker.addListener("click", () => this.showOrderInfo(order, marker));
+          // помещаем маркер в массив маркеров
+          this.orderMarkers.push(marker);
+          // помещаем координаты маркера для центрироавния карты
+          this.bounds.extend(marker.position);
+          // вешам событие на маркер
+          marker.addListener("click", () => this.showOrderInfo(order, marker));
+        }
       });
       // центрируем карту
       if (this.deliveryInfo.length) this.map.fitBounds(this.bounds);

@@ -49,9 +49,11 @@ export default {
       })
 
       DELIVERY_INFO.forEach((order, index) => {
-        let date = new Date(order.create_time);
-        countOrders[`${date.getMonth()}-${date.getDay()}-${date.getHours()}`] = countOrders[`${date.getMonth()}-${date.getDay()}-${date.getHours()}`] ? ++countOrders[`${date.getMonth()}-${date.getDay()}-${date.getHours()}`] : 1;
-        data.push([date.getTime() + 10800000, countOrders[`${date.getMonth()}-${date.getDay()}-${date.getHours()}`]])
+        if (order.point_number !== "1") {
+          let date = new Date(order.create_time);
+          countOrders[`${date.getMonth()}-${date.getDay()}-${date.getHours()}`] = countOrders[`${date.getMonth()}-${date.getDay()}-${date.getHours()}`] ? ++countOrders[`${date.getMonth()}-${date.getDay()}-${date.getHours()}`] : 1;
+          data.push([date.getTime() + 10800000, countOrders[`${date.getMonth()}-${date.getDay()}-${date.getHours()}`]])
+        }
       })
 
       return data
