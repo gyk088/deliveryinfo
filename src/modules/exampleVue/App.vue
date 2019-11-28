@@ -22,13 +22,6 @@ export default {
       timeInterval: "all",
       selected: 'fb',
       select: undefined,
-      // data:  [
-      //   [1167609600000, 1],
-      //   [1167696000000, 3],
-      //   [1167782400000, 4],
-      //   [1167868800000, 1],
-      //   [1167955200000, 3]
-      // ],
       options: [
         {
           label: 'Google',
@@ -46,19 +39,20 @@ export default {
       let data = [];
       let countOrders = {}
 
-      DELIVERY_INFO.forEach((order, index) => {
-        let date = new Date(order.create_time);
-        countOrders[`${date.getMonth()}-${date.getDay()}`] = countOrders[`${date.getMonth()}-${date.getDay()}`] ? ++countOrders[`${date.getMonth()}-${date.getDay()}`] : 1;
-        data.push([new Date(order.create_time).getTime(), countOrders[`${date.getMonth()}-${date.getDay()}`]])
-      })
+      DELIVERY_INFO.sort((a, b) => {
+        let aDate = new Date(a.create_time).getTime()
+        let bDate = new Date(b.create_time).getTime()
 
-      data.sort((a, b) => {
-        if (a[0] > b[0]) return 1;
-        if (a[0] < b[0]) return -1;
+        if (aDate > bDate) return 1;
+        if (aDate < bDate) return -1;
         return 0;
       })
 
-      console.log(data)
+      DELIVERY_INFO.forEach((order, index) => {
+        let date = new Date(order.create_time);
+        countOrders[`${date.getMonth()}-${date.getDay()}-${date.getHours()}`] = countOrders[`${date.getMonth()}-${date.getDay()}-${date.getHours()}`] ? ++countOrders[`${date.getMonth()}-${date.getDay()}-${date.getHours()}`] : 1;
+        data.push([date.getTime() + 10800000, countOrders[`${date.getMonth()}-${date.getDay()}-${date.getHours()}`]])
+      })
 
       return data
     }
@@ -147,8 +141,9 @@ export default {
         type: "datetime"
       },
       yAxis: {
+        min: 0,
         title: {
-          text: ""
+          text: "количество заказов в течении часа"
         }
       },
       legend: {

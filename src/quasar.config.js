@@ -23,7 +23,13 @@ import {
   QTable,
   QTh,
   QTr,
-  QTd
+  QTd,
+  QDate,
+  QInput,
+  QPopupProxy,
+  ClosePopup,
+  Ripple,
+  QBadge
 } from "quasar"
 
 export default () =>
@@ -51,6 +57,14 @@ export default () =>
       QTable,
       QTh,
       QTr,
-      QTd
+      QTd,
+      QDate,
+      QInput,
+      QPopupProxy,
+      QBadge
+    },
+    directives: {
+      ClosePopup,
+      Ripple
     }
   })
