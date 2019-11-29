@@ -1,27 +1,28 @@
 <template>
   <div id="MainContent">
+    <MultiChart
+      :data="ChartMultiData"
+      name="ChartMulti"
+      title="Общий график (объединяющий три нижних)"
+    />
+
     <TimeChart
       :data="chartOrderDoneData"
       name="ChartOrderDone"
-      title="количество выполненных заказов в течении часа (с учетом n точек)"
+      title="Количество выполненных заказов в течении часа (с учетом n точек)"
     />
-    <div
-      class="text-h6 text-center"
-    >количество выполненных заказов в течении часа (с учетом n точек)</div>
+
     <TimeChart
       :data="ChartOrderData"
       name="ChartOrder"
-      title="количество заказов в течении часа (без учета n точек)"
+      title="Количество заказов в течении часа (без учета n точек)"
     />
-    <div class="text-h6 text-center">количество заказов в течении часа (без учета n точек)</div>
+
     <TimeChart
       :data="ChartOrderCancelData"
       name="ChartOrderCancel"
-      title="количество отмененыых заказов в течении часа (без учета n точек)"
+      title="Количество отмененных заказов в течении часа"
     />
-    <div
-      class="text-h6 text-center"
-    >количество отмененных заказов в течении часа (без учета n точек)</div>
   </div>
 </template>
 
@@ -29,6 +30,7 @@
 import DELIVERY_INFO from "../../delivery_info";
 import DELIVERY_INFO_ALL from "../../delivery_info_all";
 import TimeChart from "Charts/components/TimeChart.vue";
+import MultiChart from "Charts/components/MultiChart.vue";
 /**
  * Компонент график
  */
@@ -36,7 +38,8 @@ export default {
   el: "#MainContent",
   name: "DashboardChart",
   components: {
-    TimeChart
+    TimeChart,
+    MultiChart
   },
   computed: {
     chartOrderDoneData: function() {
@@ -144,6 +147,25 @@ export default {
         }
       });
       return data;
+    },
+    ChartMultiData: function() {
+      return {
+        chartOrderCancelData: {
+          data: this.ChartOrderCancelData,
+          title: "Отмененные заказы",
+          color: "#b71c1c"
+        },
+        chartOrderData: {
+          title: "Выполненые заказы (без n точек)",
+          data: this.ChartOrderData,
+          color: "#ccff90"
+        },
+        chartOrderDoneData: {
+          title: "Выполненые заказы (с n точек)",
+          data: this.chartOrderDoneData,
+          color: "#2979ff"
+        }
+      };
     }
   }
 };

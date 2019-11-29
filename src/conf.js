@@ -1,5 +1,5 @@
 import QuasarConfif from "./quasar.config"
-import Charts from "Charts/vue.main"
+import Charts from "Charts/charts.module"
 import Map from "Map/map.module"
 import Root from "Root/root.main"
 

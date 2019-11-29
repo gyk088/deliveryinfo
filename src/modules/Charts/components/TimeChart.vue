@@ -69,11 +69,9 @@ export default {
         zoomType: "x"
       },
       title: {
-        text: ""
+        text: this.title
       },
-      subtitle: {
-        text: ""
-      },
+
       xAxis: {
         tickInterval: 3600 * 1000,
         type: "datetime"
