@@ -74,7 +74,7 @@ export default {
       },
 
       xAxis: {
-        tickInterval: 3600 * 1000,
+        tickInterval: 24 * 3600 * 1000,
         type: "datetime"
       },
       yAxis: {
