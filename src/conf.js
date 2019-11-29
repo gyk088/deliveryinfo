@@ -1,7 +1,7 @@
 import QuasarConfif from "./quasar.config"
-import VueApp from "ExampleVue/vue.main"
+import Charts from "Charts/vue.main"
 import Map from "Map/map.module"
-import ExampleRootVue from "ExampleRootVue/root.main"
+import Root from "Root/root.main"
 
 
 QuasarConfif()
@@ -12,15 +12,15 @@ export default {
     root: {
       name: "root",
       hidden: true,
-      class: ExampleRootVue,
+      class: Root,
     },
     main: {
       name: "График",
       hidden: false,
-      class: VueApp
+      class: Charts
     },
     Map: {
-      name: "Крата",
+      name: "Карта",
       hidden: false,
       class: Map
     },

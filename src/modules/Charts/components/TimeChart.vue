@@ -1,92 +1,27 @@
 <template>
-  <div id="MainContent">
-      <div class="chart__body" data-controller="chart">
-        <div class="ch" id="chart-00"></div>
-      </div>
-    </div>
+  <div class="chart__body" data-controller="chart">
+    <div class="ch" :id="name"></div>
   </div>
 </template>
 
 <script>
 import Highcharts from "highcharts";
-import DELIVERY_INFO from "../../delivery_info";
 /**
  * Компонент график
  */
 export default {
-  el: "#MainContent",
-  name: "DashboardChart",
+  name: "TimeChart",
+  props: {
+    data: Array,
+    name: String,
+    title: String
+  },
   data() {
     return {
-      highcharts: undefined,
-      timeInterval: "all",
-      selected: 'fb',
-      select: undefined,
-      options: [
-        {
-          label: 'Google',
-          value: 'goog'
-        },
-        {
-          label: 'Facebook',
-          value: 'fb'
-        }
-      ],
+      highcharts: undefined
     };
   },
-  computed: {
-    data: function() {
-      let data = [];
-      let countOrders = {}
-
-      DELIVERY_INFO.sort((a, b) => {
-        let aDate = new Date(a.create_time).getTime()
-        let bDate = new Date(b.create_time).getTime()
-
-        if (aDate > bDate) return 1;
-        if (aDate < bDate) return -1;
-        return 0;
-      })
-
-      DELIVERY_INFO.forEach((order, index) => {
-        if (order.point_number !== "1") {
-          let date = new Date(order.create_time);
-          countOrders[`${date.getMonth()}-${date.getDay()}-${date.getHours()}`] = countOrders[`${date.getMonth()}-${date.getDay()}-${date.getHours()}`] ? ++countOrders[`${date.getMonth()}-${date.getDay()}-${date.getHours()}`] : 1;
-          data.push([date.getTime() + 10800000, countOrders[`${date.getMonth()}-${date.getDay()}-${date.getHours()}`]])
-        }
-      })
-
-      return data
-    }
-  },
-  methods: {
-    /**
-     * Выбрать фильтры на гарфике.
-     *
-     * @param {string} timeInterval - временной интервал.
-     */
-    filter(timeInterval) {
-      let $this = this;
-      if (timeInterval) $this.timeInterval = timeInterval;
-
-      $this.$emit("filter", {
-        timeInerval: $this.timeInterval,
-        select: $this.select
-      });
-
-      $this.highcharts.update({
-        series: [
-          {
-            data: $this.data
-          }
-        ]
-      });
-    }
-  },
   mounted() {
-    let $this = this;
-    console.log($this.testData)
-    $this.select = $this.selected ? $this.selected : $this.options[0].value;
     Highcharts.setOptions({
       lang: {
         months: [
@@ -129,7 +64,7 @@ export default {
       }
     });
 
-    this.highcharts = Highcharts.chart("chart-00", {
+    this.highcharts = Highcharts.chart(this.name, {
       chart: {
         zoomType: "x"
       },
@@ -140,12 +75,14 @@ export default {
         text: ""
       },
       xAxis: {
+        tickInterval: 3600 * 1000,
         type: "datetime"
       },
       yAxis: {
         min: 0,
+        gridLineWidth: 0,
         title: {
-          text: "количество заказов в течении часа"
+          text: this.title
         }
       },
       legend: {
@@ -186,7 +123,10 @@ export default {
         {
           type: "area",
           name: "Данные:",
-          data: $this.data
+          data: this.data,
+          marker: {
+            radius: 4
+          }
         }
       ]
     });
@@ -198,5 +138,4 @@ export default {
 .chart__body {
   margin-top: 50px;
 }
-
 </style>

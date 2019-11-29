@@ -29,7 +29,8 @@ import {
   QPopupProxy,
   ClosePopup,
   Ripple,
-  QBadge
+  QBadge,
+  QTime
 } from "quasar"
 
 export default () =>
@@ -61,7 +62,8 @@ export default () =>
       QDate,
       QInput,
       QPopupProxy,
-      QBadge
+      QBadge,
+      QTime
     },
     directives: {
       ClosePopup,

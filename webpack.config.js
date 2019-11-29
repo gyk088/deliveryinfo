@@ -108,8 +108,8 @@ module.exports = {
       Images: path.resolve(__dirname, "src/images/"),
       OneDeckCore: path.resolve(__dirname, "src/core/"),
       Map: path.resolve(__dirname, "src/modules/Map/"),
-      ExampleVue: path.resolve(__dirname, "src/modules/exampleVue/"),
-      ExampleRootVue: path.resolve(__dirname, "src/modules/exampleRootVue/"),
+      Charts: path.resolve(__dirname, "src/modules/Charts/"),
+      Root: path.resolve(__dirname, "src/modules/Root/"),
     }
   },
   plugins: [

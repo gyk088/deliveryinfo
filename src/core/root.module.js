@@ -35,14 +35,14 @@ export default class RootMediator {
    * should call eventHandler
    * @abstract
    */
-  init() {}
+  init() { }
 
   /**
    * this method must be overridden by sub class.
    * should contain all events
    * @abstract
    */
-  eventHandler() {}
+  eventHandler() { }
 
   /**
    * this method creates all modules object
@@ -86,8 +86,10 @@ export default class RootMediator {
       moduleData.path = "/"
     }
 
-    if (!this.$$modules[moduleData.module])
-      return console.error("no such module:", moduleData.module)
+    if (!this.$$modules[moduleData.module]) {
+      moduleData.module = "main"
+      moduleData.path = "/"
+    }
 
     if (
       this.$$currentModule.name &&

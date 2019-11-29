@@ -1,10 +1,9 @@
 /**
  * Class Root
  */
-import VueApp from "ExampleRootVue/App.vue"
+import VueApp from "Root/App.vue"
 import Vue from "vue"
 import RootModule from "OneDeckCore/root.module"
-
 
 export default class Root extends RootModule {
   init() {

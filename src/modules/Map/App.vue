@@ -1,21 +1,28 @@
 <template>
   <div id="MainContent">
     <div id="ToolBar">
-      <div class="row" style="z-index: 10; position: relative">
+      <div class="row">
         <div class="col-1">
           <div class="q-pa-md">
-            <div class="q-mb-sm">
+            <div class="q-mb-sm" style="z-index: 10; position: relative">
               <q-badge color="teal">От: {{ dateFrom }}</q-badge>
             </div>
 
-            <q-btn icon="event" round color="primary">
+            <q-btn icon="event" round color="primary" style="z-index: 10; position: relative">
               <q-popup-proxy
                 @before-show="updateProxyFrom"
                 transition-show="scale"
                 transition-hide="scale"
                 ref="qDateProxyFrom"
               >
-                <q-date v-model="proxyDateFrom" @input="saveFrom" />
+                <div class="flex_row">
+                  <div class="fex_col">
+                    <q-date v-model="proxyDateFrom" mask="YYYY-MM-DD HH:mm" />
+                  </div>
+                  <div class="fex_col">
+                    <q-time v-model="proxyDateFrom" @input="saveFrom" mask="YYYY-MM-DD HH:mm" />
+                  </div>
+                </div>
               </q-popup-proxy>
             </q-btn>
           </div>
@@ -23,18 +30,25 @@
 
         <div class="col-1">
           <div class="q-pa-md">
-            <div class="q-mb-sm">
+            <div class="q-mb-sm" style="z-index: 10; position: relative">
               <q-badge color="teal">До: {{ dateTo }}</q-badge>
             </div>
 
-            <q-btn icon="event" round color="primary">
+            <q-btn icon="event" round color="primary" style="z-index: 10; position: relative">
               <q-popup-proxy
                 @before-show="updateProxyTo"
                 transition-show="scale"
                 transition-hide="scale"
                 ref="qDateProxyTo"
               >
-                <q-date v-model="proxyDateTo" @input="saveTo" />
+                <div class="flex_row">
+                  <div class="fex_col">
+                    <q-date v-model="proxyDateTo" mask="YYYY-MM-DD HH:mm" />
+                  </div>
+                  <div class="fex_col">
+                    <q-time v-model="proxyDateTo" @input="saveTo" mask="YYYY-MM-DD HH:mm" />
+                  </div>
+                </div>
               </q-popup-proxy>
             </q-btn>
           </div>
@@ -80,6 +94,7 @@ export default {
   },
   computed: {
     deliveryInfo: function() {
+      console.log(this.dateFrom);
       if (this.dateFrom && this.dateTo) {
         let dateFrom = new Date(this.dateFrom).getTime();
         let dateTo = new Date(this.dateTo).getTime();
@@ -97,14 +112,6 @@ export default {
       }
     }
   },
-  watch: {
-    dateTo() {
-      this.ordersToMap();
-    },
-    dateFrom() {
-      this.ordersToMap();
-    }
-  },
   methods: {
     updateProxyTo() {
       this.proxyDateTo = this.dateTo;
@@ -115,10 +122,12 @@ export default {
     saveFrom() {
       this.dateFrom = this.proxyDateFrom;
       this.$refs.qDateProxyFrom.hide();
+      this.ordersToMap();
     },
     saveTo() {
       this.dateTo = this.proxyDateTo;
       this.$refs.qDateProxyTo.hide();
+      this.ordersToMap();
     },
     /**
      * Инициализация краты
@@ -128,7 +137,12 @@ export default {
       this.map = new google.maps.Map(document.getElementById("DeliveryMap"), {
         zoom: 11,
         center: center,
-        mapTypeControl: false
+        zoomControl: true,
+        mapTypeControl: false,
+        scaleControl: false,
+        streetViewControl: false,
+        rotateControl: false,
+        fullscreenControl: false
       });
       this.bounds = new google.maps.LatLngBounds();
       this.bounds.extend(center);
@@ -190,16 +204,30 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.flex_row {
+  display: flex;
+  flex-direction: row;
+}
+.q-time {
+  box-shadow: none;
+}
+.q-date {
+  box-shadow: none;
+}
 #MainContent {
   width: 100%;
-  height: 100%;
+  height: 93vh;
 }
 #DeliveryMap {
+  margin-top: 5px;
   width: 100vw;
-  height: 95vh;
+  height: 100%;
 }
 #ToolBar {
   width: 100vw;
   height: 0vh;
+}
+.q-toolbar {
+  min-height: 8vh;
 }
 </style>
