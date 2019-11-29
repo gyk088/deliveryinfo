@@ -1,41 +1,14 @@
 <template>
   <div id="MainContent">
-    <MultiChart
-      :data="ChartMultiData"
-      name="ChartMulti"
-      title="Общий график (объединяющий 4 нижних)"
-    />
-
-    <TimeChart
-      :data="chartOrderDoneData"
-      name="ChartOrderDone"
-      title="Количество выполненных заказов в течении часа (с учетом n точек)"
-    />
-
-    <TimeChart
-      :data="ChartOrderData"
-      name="ChartOrder"
-      title="Количество заказов в течении часа (без учета n точек)"
-    />
-
-    <TimeChart
-      :data="ChartOrderCancelData"
-      name="ChartOrderCancel"
-      title="Количество отмененных заказов в течении часа"
-    />
-
-    <TimeChart
-      :data="chartOrderDoneDayData"
-      name="ChartOrderCancel"
-      title="Количество выполненных заказов по дням (с учетом n точек)"
-    />
+    <MultiChart :data="ChartMultiData" name="ChartMulti" title="Количество заказов по часам" />
+    <ColumnChart :data="chartOrderDoneDayData" name="ChartDay" title="Количество заказов по дням" />
   </div>
 </template>
 
 <script>
 import DELIVERY_INFO from "../../delivery_info";
 import DELIVERY_INFO_ALL from "../../delivery_info_all";
-import TimeChart from "Charts/components/TimeChart.vue";
+import ColumnChart from "Charts/components/ColumnChart.vue";
 import MultiChart from "Charts/components/MultiChart.vue";
 /**
  * Компонент график
@@ -44,7 +17,7 @@ export default {
   el: "#MainContent",
   name: "DashboardChart",
   components: {
-    TimeChart,
+    ColumnChart,
     MultiChart
   },
   computed: {
@@ -65,18 +38,18 @@ export default {
         if (order.point_number !== "1") {
           let date = new Date(order.create_time);
           countOrders[
-            `${date.getMonth()}-${date.getDay()}-${date.getHours()}`
+            `${date.getMonth() + 1}-${date.getDate()}-${date.getHours()}`
           ] = countOrders[
-            `${date.getMonth()}-${date.getDay()}-${date.getHours()}`
+            `${date.getMonth() + 1}-${date.getDate()}-${date.getHours()}`
           ]
             ? ++countOrders[
-                `${date.getMonth()}-${date.getDay()}-${date.getHours()}`
+                `${date.getMonth() + 1}-${date.getDate()}-${date.getHours()}`
               ]
             : 1;
           data.push([
             date.getTime() + 10800000,
             countOrders[
-              `${date.getMonth()}-${date.getDay()}-${date.getHours()}`
+              `${date.getMonth() + 1}-${date.getDate()}-${date.getHours()}`
             ]
           ]);
         }
@@ -101,18 +74,18 @@ export default {
         if (order.point_number === "1" && order.status === "canceled") {
           let date = new Date(order.create_time);
           countOrders[
-            `${date.getMonth()}-${date.getDay()}-${date.getHours()}`
+            `${date.getMonth() + 1}-${date.getDate()}-${date.getHours()}`
           ] = countOrders[
-            `${date.getMonth()}-${date.getDay()}-${date.getHours()}`
+            `${date.getMonth() + 1}-${date.getDate()}-${date.getHours()}`
           ]
             ? ++countOrders[
-                `${date.getMonth()}-${date.getDay()}-${date.getHours()}`
+                `${date.getMonth() + 1}-${date.getDate()}-${date.getHours()}`
               ]
             : 1;
           data.push([
             date.getTime() + 10800000,
             countOrders[
-              `${date.getMonth()}-${date.getDay()}-${date.getHours()}`
+              `${date.getMonth() + 1}-${date.getDate()}-${date.getHours()}`
             ]
           ]);
         }
@@ -136,18 +109,18 @@ export default {
         if (order.point_number === "1") {
           let date = new Date(order.create_time);
           countOrders[
-            `${date.getMonth()}-${date.getDay()}-${date.getHours()}`
+            `${date.getMonth() + 1}-${date.getDate()}-${date.getHours()}`
           ] = countOrders[
-            `${date.getMonth()}-${date.getDay()}-${date.getHours()}`
+            `${date.getMonth() + 1}-${date.getDate()}-${date.getHours()}`
           ]
             ? ++countOrders[
-                `${date.getMonth()}-${date.getDay()}-${date.getHours()}`
+                `${date.getMonth() + 1}-${date.getDate()}-${date.getHours()}`
               ]
             : 1;
           data.push([
             date.getTime() + 10800000,
             countOrders[
-              `${date.getMonth()}-${date.getDay()}-${date.getHours()}`
+              `${date.getMonth() + 1}-${date.getDate()}-${date.getHours()}`
             ]
           ]);
         }
@@ -167,19 +140,21 @@ export default {
         return 0;
       });
 
+      let timeToPush;
       DELIVERY_INFO.forEach((order, index) => {
-        if (order.point_number !== "1") {
+        if (order.point_number === "1") {
           let date = new Date(order.create_time);
-          countOrders[`${date.getMonth()}-${date.getDay()}`] = countOrders[
-            `${date.getMonth()}-${date.getDay()}`
-          ]
-            ? ++countOrders[`${date.getMonth()}-${date.getDay()}`]
+          let dayDate = new Date(
+            `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+          );
+          countOrders[dayDate.getTime()] = countOrders[dayDate.getTime()]
+            ? ++countOrders[dayDate.getTime()]
             : 1;
-          data.push([
-            date.getTime() + 10800000,
-            countOrders[`${date.getMonth()}-${date.getDay()}`]
-          ]);
         }
+      });
+
+      Object.keys(countOrders).forEach(key => {
+        data.push([parseInt(key), countOrders[key]]);
       });
 
       return data;
@@ -200,11 +175,6 @@ export default {
           title: "Выполненые заказы по часам (с учетом n точек)",
           data: this.chartOrderDoneData,
           color: "#2979ff"
-        },
-        chartOrderDoneDayData: {
-          title: "Выполненые заказы по дням (с учетом n точек)",
-          data: this.chartOrderDoneDayData,
-          color: "#f57f17"
         }
       };
     }
