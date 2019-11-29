@@ -3,7 +3,7 @@
     <MultiChart
       :data="ChartMultiData"
       name="ChartMulti"
-      title="Общий график (объединяющий три нижних)"
+      title="Общий график (объединяющий 4 нижних)"
     />
 
     <TimeChart
@@ -22,6 +22,12 @@
       :data="ChartOrderCancelData"
       name="ChartOrderCancel"
       title="Количество отмененных заказов в течении часа"
+    />
+
+    <TimeChart
+      :data="chartOrderDoneDayData"
+      name="ChartOrderCancel"
+      title="Количество выполненных заказов по дням (с учетом n точек)"
     />
   </div>
 </template>
@@ -148,22 +154,57 @@ export default {
       });
       return data;
     },
+    chartOrderDoneDayData: function() {
+      let data = [];
+      let countOrders = {};
+
+      DELIVERY_INFO.sort((a, b) => {
+        let aDate = new Date(a.create_time).getTime();
+        let bDate = new Date(b.create_time).getTime();
+
+        if (aDate > bDate) return 1;
+        if (aDate < bDate) return -1;
+        return 0;
+      });
+
+      DELIVERY_INFO.forEach((order, index) => {
+        if (order.point_number !== "1") {
+          let date = new Date(order.create_time);
+          countOrders[`${date.getMonth()}-${date.getDay()}`] = countOrders[
+            `${date.getMonth()}-${date.getDay()}`
+          ]
+            ? ++countOrders[`${date.getMonth()}-${date.getDay()}`]
+            : 1;
+          data.push([
+            date.getTime() + 10800000,
+            countOrders[`${date.getMonth()}-${date.getDay()}`]
+          ]);
+        }
+      });
+
+      return data;
+    },
     ChartMultiData: function() {
       return {
         chartOrderCancelData: {
           data: this.ChartOrderCancelData,
-          title: "Отмененные заказы",
+          title: "Отмененные заказы по часам",
           color: "#b71c1c"
         },
         chartOrderData: {
-          title: "Выполненые заказы (без n точек)",
+          title: "Выполненые заказы по часам (без n точек)",
           data: this.ChartOrderData,
-          color: "#ccff90"
+          color: "#1b5e20"
         },
         chartOrderDoneData: {
-          title: "Выполненые заказы (с n точек)",
+          title: "Выполненые заказы по часам (с учетом n точек)",
           data: this.chartOrderDoneData,
           color: "#2979ff"
+        },
+        chartOrderDoneDayData: {
+          title: "Выполненые заказы по дням (с учетом n точек)",
+          data: this.chartOrderDoneDayData,
+          color: "#f57f17"
         }
       };
     }
