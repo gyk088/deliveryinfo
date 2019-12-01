@@ -17,12 +17,12 @@ export default {
     main: {
       name: "График",
       hidden: false,
-      class: Map
+      class: Charts
     },
     Map: {
       name: "Карта",
       hidden: false,
-      class: Charts
+      class: Map
     },
   }
 }

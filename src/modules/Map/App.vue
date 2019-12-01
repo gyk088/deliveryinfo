@@ -53,24 +53,20 @@
             </q-btn>
           </div>
         </div>
-        <div class="col-9"></div>
-        <div class="col-1" style="margin-top: 40px;">
-          <q-btn
-            icon="directions_run"
-            round
-            color="primary"
+        <div class="col-7"></div>
+        <div
+          class="col-2"
+          style="margin-top: 40px; max-height: 700px; overflow: auto; z-index: 10; position: relative"
+        >
+          <p
+            v-for="(client, id) in clienst"
+            :key="id"
+            class="client"
             style="z-index: 10; position: relative"
-          >
-            <q-popup-proxy transition-show="scale" transition-hide="scale">
-              <p
-                v-for="(client, id) in clienst"
-                :key="id"
-                class="client"
-                :style="{'background-color': client.color}"
-              >{{client.name}}</p>
-            </q-popup-proxy>
-          </q-btn>
+            :style="{'background-color': client.color}"
+          >{{client.name}}</p>
         </div>
+        <div class="col-1"></div>
       </div>
     </div>
 
@@ -81,6 +77,7 @@
 <script>
 import "Images";
 import DELIVERY_INFO from "../../delivery_info";
+import { isEmpty } from "OneDeckCore/helpers.js";
 
 /**
  * Модуль карта с водитлеями и с заказами
@@ -128,12 +125,20 @@ export default {
     },
     clienst: function() {
       let clienst = {};
-      DELIVERY_INFO.forEach(order => {
-        clienst[order.admin_id] = {
-          name: order.admin_name,
-          color: `#${order.admin_id}F`
-        };
-      });
+      if (this.dateFrom && this.dateTo) {
+        let dateFrom = new Date(this.dateFrom).getTime();
+        let dateTo = new Date(this.dateTo).getTime();
+
+        DELIVERY_INFO.forEach(order => {
+          let ctime = new Date(order.create_time).getTime();
+          if (ctime < dateTo && ctime > dateFrom) {
+            clienst[order.admin_id] = {
+              name: order.admin_name,
+              color: `#${order.admin_id}F`
+            };
+          }
+        });
+      }
 
       return clienst;
     }
@@ -237,6 +242,7 @@ export default {
   mounted() {
     // инициализируем карту
     this.initMap(new google.maps.LatLng(45.03547, 38.975313));
+    this.$refs.clientList.show();
   }
 };
 
