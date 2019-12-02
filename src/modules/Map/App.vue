@@ -76,7 +76,7 @@
 
 <script>
 import "Images";
-import DELIVERY_INFO from "../../delivery_info";
+import DELIVERY_INFO from "../../delivery_info_all";
 import { isEmpty } from "OneDeckCore/helpers.js";
 
 /**
@@ -114,7 +114,12 @@ export default {
         let dateTo = new Date(this.dateTo).getTime();
         let deliveryInfo = DELIVERY_INFO.filter(order => {
           let ctime = new Date(order.create_time).getTime();
-          if (ctime < dateTo && ctime > dateFrom) {
+          if (
+            ctime < dateTo &&
+            ctime > dateFrom &&
+            order.status === "done" &&
+            order.point_number !== "1"
+          ) {
             return order;
           }
         });
@@ -131,7 +136,12 @@ export default {
 
         DELIVERY_INFO.forEach(order => {
           let ctime = new Date(order.create_time).getTime();
-          if (ctime < dateTo && ctime > dateFrom) {
+          if (
+            ctime < dateTo &&
+            ctime > dateFrom &&
+            order.status === "done" &&
+            order.point_number !== "1"
+          ) {
             clienst[order.admin_id] = {
               name: order.admin_name,
               color: `#${order.admin_id}F`

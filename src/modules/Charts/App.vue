@@ -6,8 +6,7 @@
 </template>
 
 <script>
-import DELIVERY_INFO from "../../delivery_info";
-import DELIVERY_INFO_ALL from "../../delivery_info_all";
+import DELIVERY_INFO_ALL from "../../delivery_info_all.js";
 import ColumnChart from "Charts/components/ColumnChart.vue";
 import MultiChart from "Charts/components/MultiChart.vue";
 /**
@@ -25,7 +24,7 @@ export default {
       let data = [];
       let countOrders = {};
 
-      DELIVERY_INFO.sort((a, b) => {
+      DELIVERY_INFO_ALL.sort((a, b) => {
         let aDate = new Date(a.create_time).getTime();
         let bDate = new Date(b.create_time).getTime();
 
@@ -34,8 +33,8 @@ export default {
         return 0;
       });
 
-      DELIVERY_INFO.forEach((order, index) => {
-        if (order.point_number !== "1") {
+      DELIVERY_INFO_ALL.forEach((order, index) => {
+        if (order.point_number !== "1" && order.status === "done") {
           let date = new Date(order.create_time);
           countOrders[
             `${date.getMonth() + 1}-${date.getDate()}-${date.getHours()}`
@@ -96,7 +95,7 @@ export default {
       let data = [];
       let countOrders = {};
 
-      DELIVERY_INFO.sort((a, b) => {
+      DELIVERY_INFO_ALL.sort((a, b) => {
         let aDate = new Date(a.create_time).getTime();
         let bDate = new Date(b.create_time).getTime();
 
@@ -105,8 +104,8 @@ export default {
         return 0;
       });
 
-      DELIVERY_INFO.forEach((order, index) => {
-        if (order.point_number === "1") {
+      DELIVERY_INFO_ALL.forEach((order, index) => {
+        if (order.point_number === "1" && order.status === "done") {
           let date = new Date(order.create_time);
           countOrders[
             `${date.getMonth() + 1}-${date.getDate()}-${date.getHours()}`
@@ -131,7 +130,7 @@ export default {
       let data = [];
       let countOrders = {};
 
-      DELIVERY_INFO.sort((a, b) => {
+      DELIVERY_INFO_ALL.sort((a, b) => {
         let aDate = new Date(a.create_time).getTime();
         let bDate = new Date(b.create_time).getTime();
 
@@ -141,8 +140,8 @@ export default {
       });
 
       let timeToPush;
-      DELIVERY_INFO.forEach((order, index) => {
-        if (order.point_number === "1") {
+      DELIVERY_INFO_ALL.forEach((order, index) => {
+        if (order.point_number === "1" && order.status === "done") {
           let date = new Date(order.create_time);
           let dayDate = new Date(
             `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
