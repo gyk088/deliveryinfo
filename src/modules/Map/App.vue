@@ -61,9 +61,12 @@
           <p
             v-for="(client, id) in clienst"
             :key="id"
-            class="client"
-            style="z-index: 10; position: relative"
-            :style="{'background-color': client.color}"
+            @click="filtered(id)"
+            class="client shadow-2"
+            :style="{
+              'background-color': clientsFilter[id] ? client.color : '#FFF',
+              'color': clientsFilter[id] ? '#FFF' : '#000',
+             }"
           >{{client.name}}</p>
         </div>
         <div class="col-1"></div>
@@ -104,10 +107,36 @@ export default {
       dateFrom: null,
       proxyDateFrom: null,
       dateTo: null,
-      proxyDateTo: null
+      proxyDateTo: null,
+      clientsFilter: {}
     };
   },
   computed: {
+    clienst: function() {
+      let clienst = {};
+      this.clientFilter = {};
+      if (this.dateFrom && this.dateTo) {
+        let dateFrom = new Date(this.dateFrom).getTime();
+        let dateTo = new Date(this.dateTo).getTime();
+
+        this.deliveryInfo.forEach(order => {
+          let ctime = new Date(order.create_time).getTime();
+          if (
+            ctime < dateTo &&
+            ctime > dateFrom &&
+            order.status === "done" &&
+            order.point_number !== "1"
+          ) {
+            clienst[order.admin_id] = {
+              name: order.admin_name,
+              color: `#${order.admin_id}`
+            };
+          }
+        });
+      }
+
+      return clienst;
+    },
     deliveryInfo: function() {
       if (this.dateFrom && this.dateTo) {
         let dateFrom = new Date(this.dateFrom).getTime();
@@ -120,6 +149,7 @@ export default {
             order.status === "done" &&
             order.point_number !== "1"
           ) {
+            this.clientsFilter[order.admin_id] = true;
             return order;
           }
         });
@@ -127,33 +157,16 @@ export default {
       } else {
         return [];
       }
-    },
-    clienst: function() {
-      let clienst = {};
-      if (this.dateFrom && this.dateTo) {
-        let dateFrom = new Date(this.dateFrom).getTime();
-        let dateTo = new Date(this.dateTo).getTime();
-
-        DELIVERY_INFO.forEach(order => {
-          let ctime = new Date(order.create_time).getTime();
-          if (
-            ctime < dateTo &&
-            ctime > dateFrom &&
-            order.status === "done" &&
-            order.point_number !== "1"
-          ) {
-            clienst[order.admin_id] = {
-              name: order.admin_name,
-              color: `#${order.admin_id}F`
-            };
-          }
-        });
-      }
-
-      return clienst;
     }
   },
   methods: {
+    filtered(admin_id) {
+      this.clientsFilter[admin_id] = this.clientsFilter[admin_id]
+        ? false
+        : true;
+      this.$forceUpdate();
+      this.ordersToMap();
+    },
     updateProxyTo() {
       this.proxyDateTo = this.dateTo;
     },
@@ -202,7 +215,7 @@ export default {
     /**
      *  Метод получает заказы из бэкенда, и помещает их на крату
      */
-    async ordersToMap() {
+    ordersToMap() {
       // удаляем все заказы на карте
       this.orderMarkers.forEach(marker => {
         marker.setMap(null);
@@ -211,7 +224,7 @@ export default {
       this.orderMarkers = [];
 
       this.deliveryInfo.forEach(order => {
-        if (order.point_number !== "1") {
+        if (order.point_number !== "1" && this.clientsFilter[order.admin_id]) {
           // создаем маркер
           let marker = new google.maps.Marker({
             position: new google.maps.LatLng(order.latitude, order.longitude),
@@ -252,7 +265,7 @@ export default {
   mounted() {
     // инициализируем карту
     this.initMap(new google.maps.LatLng(45.03547, 38.975313));
-    this.$refs.clientList.show();
+    this.ordersToMap();
   }
 };
 
@@ -297,8 +310,11 @@ function getRandomInt(max) {
 }
 .client {
   padding: 10px;
-  color: #fff;
   margin: 0 0 2px;
+  z-index: 10;
+  position: relative;
+  cursor: pointer;
+  border-radius: 5px;
 }
 .clienColor {
   width: 8px;
